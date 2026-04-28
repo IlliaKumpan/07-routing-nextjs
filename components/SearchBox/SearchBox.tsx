@@ -8,7 +8,7 @@ interface SearchBoxProps {
 export default function SearchBox({ value, onChange }: SearchBoxProps) {
   return (
     <div className={css.wrapper}>
-      <label htmlFor="search" className={css.label}>Search notes</label>
+      <label htmlFor="search" className={css.label}>Search notes </label>
       <input
         id="search"
         className={css.input}
