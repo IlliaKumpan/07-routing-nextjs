@@ -9,12 +9,8 @@ export default function FilterLayout({
 }) {
   return (
     <div style={{ display: 'flex', gap: '20px' }}>
-      <aside style={{ width: '250px' }}>
-        {sidebar}
-      </aside>
-      <section style={{ flex: 1 }}>
-        {children}
-      </section>
+      <aside>{sidebar}</aside>
+      <main>{children}</main>
     </div>
   );
 }

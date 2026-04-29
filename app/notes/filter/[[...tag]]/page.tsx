@@ -1,46 +1,24 @@
-import css from '@/components/NoteDetails/NoteDetails.module.css';
-
 interface Note {
   id: string;
   title: string;
-  text?: string;
-  tag?: string;
 }
 
-interface Props {
-  params: {
-    tag?: string[];
-  };
-}
 async function getNotes(tag?: string): Promise<Note[]> {
   const queryParam = tag && tag !== 'all' ? `?tag=${tag}` : '';
-  
-  const res = await fetch(`https://your-api.com/notes${queryParam}`, {
-    cache: 'no-store',
-  });
-  
-  if (!res.ok) throw new Error('Failed to fetch notes');
-  
+  const res = await fetch(`https://api.example.com/notes${queryParam}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed');
   return res.json();
 }
 
-export default async function FilteredNotesPage({ params }: Props) {
-  // Витягуємо сегмент тегу з масиву
-  const currentTag = params.tag?.[0];
-  const notes = await getNotes(currentTag);
+export default async function FilteredNotesPage({ params }: { params: { tag: string } }) {
+  const notes = await getNotes(params.tag);
 
   return (
-    <div className={css.container}>
-      <h2 className={css.pageTitle}>
-        Notes: {currentTag && currentTag !== 'all' ? currentTag : 'All'}
-      </h2>
-      
-      <ul className={css.notesList}>
+    <div>
+      <h2>Notes: {params.tag === 'all' ? 'All' : params.tag}</h2>
+      <ul>
         {notes.map((note) => (
-          // Тепер TypeScript знає, що у note є id та title
-          <li key={note.id} className={css.noteItem}>
-            {note.title}
-          </li>
+          <li key={note.id}>{note.title}</li>
         ))}
       </ul>
     </div>
