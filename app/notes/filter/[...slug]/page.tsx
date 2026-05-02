@@ -1,9 +1,4 @@
-interface Note {
-  id: string;
-  title: string;
-  text: string;
-  tag: string;
-}
+import NotesClient from './Notes.client';
 
 interface Props {
   params: Promise<{
@@ -11,32 +6,31 @@ interface Props {
   }>;
 }
 
-async function getNotes(tag?: string): Promise<Note[]> {
-  const queryParam = tag && tag !== 'all' ? `?tag=${tag}` : '';
-  const res = await fetch(`https://your-api-domain.com/notes${queryParam}`, {
-    cache: 'no-store',
-  });
-  if (!res.ok) throw new Error('Failed to fetch');
+async function getNotes(tag?: string) {
+  const baseUrl = 'https://notehub-public.goit.study/api/notes';
+  const url = tag && tag !== 'all' ? `${baseUrl}?tag=${tag}` : baseUrl;
+
+  const res = await fetch(url, { cache: 'no-store' });
+  
+  if (!res.ok) {
+    throw new Error('Не вдалося завантажити нотатки');
+  }
+
   return res.json();
 }
 
 export default async function FilteredNotesPage({ params }: Props) {
-  const { slug } = await params; // Розпаковуємо slug
-  const currentTag = slug[0];    // Беремо перший сегмент як наш тег
+  const { slug } = await params;
+  const currentTag = slug[0];
 
   const notes = await getNotes(currentTag);
 
   return (
-    <div>
-      <h2>Notes: {currentTag === 'all' ? 'All' : currentTag}</h2>
-      <ul>
-        {notes.map((note) => (
-          <li key={note.id}>
-            <h3>{note.title}</h3>
-            <p>{note.tag}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <section>
+      <header className="px-4 py-2 border-b">
+        <h2 className="text-xl font-bold uppercase">Тег: {currentTag}</h2>
+      </header>
+      <NotesClient notes={notes} />
+    </section>
   );
 }
