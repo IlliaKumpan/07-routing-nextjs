@@ -1,5 +1,5 @@
 import { Modal } from '@/components/Modal/Modal';
-import NotePreviewClient from '../../@modal/(.)notes/[id]/NotePreview.client'; // Імпортуємо наш новий файл
+import NotePreviewClient from '../../@modal/(.)notes/[id]/NotePreview.client';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -21,7 +21,6 @@ export default async function NoteModalPage({ params }: Props) {
 
   return (
     <Modal>
-      {/* Передаємо отриману нотатку в клієнтський компонент */}
       <NotePreviewClient note={note} />
     </Modal>
   );
