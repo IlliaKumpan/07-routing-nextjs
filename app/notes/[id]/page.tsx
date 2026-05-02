@@ -1,5 +1,5 @@
 import { Modal } from '@/components/Modal/Modal';
-import NotePreviewClient from './NotePreview.client'; // Імпортуємо наш новий файл
+import NotePreviewClient from '../../@modal/(.)notes/[id]/NotePreview.client'; // Імпортуємо наш новий файл
 
 interface Props {
   params: Promise<{ id: string }>;
