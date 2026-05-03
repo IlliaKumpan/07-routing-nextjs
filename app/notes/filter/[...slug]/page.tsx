@@ -1,43 +1,35 @@
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
+import { fetchNotes } from '@/lib/api';
 import NotesClient from './Notes.client';
+
 interface FilteredNotesPageProps {
   params: Promise<{
     slug: string[];
   }>;
 }
 
-async function getNotes(slug: string[]) {
-  const baseUrl = 'https://notehub-public.goit.study/api/notes';
-  
-  const currentTag = slug?.[0] || 'all';
-  const url = (currentTag !== 'all') 
-    ? `${baseUrl}?tag=${encodeURIComponent(currentTag)}` 
-    : baseUrl;
-
-  const res = await fetch(url, { 
-    cache: 'no-store',
-    headers: {
-      'Accept': 'application/json'
-    }
-  });
-  
-
-  return res.json();
-}
-
 export default async function FilteredNotesPage({ params }: FilteredNotesPageProps) {
   const { slug } = await params;
+  const currentTag = slug?.[0] || 'all';
   
-  const notes = await getNotes(slug);
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ['notes', { tag: currentTag, page: 1, search: '' }],
+    queryFn: () => fetchNotes({ tag: currentTag, page: 1 }),
+  });
 
   return (
     <section className="notes-filter-section">
       <header className="mb-6 px-4">
         <h2 className="text-xl font-bold uppercase">
-          Тег: {slug[0] || 'all'}
+          Тег: {currentTag}
         </h2>
       </header>
 
-      <NotesClient notes={notes} />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <NotesClient tag={currentTag} />
+      </HydrationBoundary>
     </section>  
   );
 }
