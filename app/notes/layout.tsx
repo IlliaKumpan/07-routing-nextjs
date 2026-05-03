@@ -1,15 +1,14 @@
-import React from "react";
-
 export default function NotesLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal?: React.ReactNode;
 }) {
   return (
-    <div className="notes-page-container">
-      <section className="notes-content">
-        {children}
-      </section>
-    </div>
+    <>
+      {children}
+      {modal}
+    </>
   );
 }

@@ -1,37 +1,26 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import "./globals.css"; 
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
-import { Header } from "@/components/Header/Header";
-import { Footer } from "@/components/Footer/Footer";
-
-const inter = Inter({ subsets: ["latin"] });
+import { Header } from ".././components/Header/Header";
+import { Footer } from ".././components/Footer/Footer";
 
 export const metadata: Metadata = {
   title: "NoteHub",
-  description: "Modern notes application",
+  description: "Manage your notes efficiently",
 };
 
 export default function RootLayout({
   children,
-  modal,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-  modal: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      <body 
-        className={inter.className} 
-        suppressHydrationWarning={true}
-      >
+      <body>
         <TanStackProvider>
-          <div className="layout-wrapper">
+          <div className="app-wrapper">
             <Header />
-            <main className="main-content">
-              {children}
-              {modal}
-            </main>
+            <main>{children}</main>
             <Footer />
           </div>
         </TanStackProvider>
