@@ -1,14 +1,17 @@
 export default function NotesLayout({
   children,
-  modal,
+  sidebar 
 }: {
   children: React.ReactNode;
-  modal?: React.ReactNode;
+  sidebar?: React.ReactNode;
 }) {
   return (
-    <>
-      {children}
-      {modal}
-    </>
+    <div className="notes-container">
+      <aside>{sidebar}</aside> 
+      
+      <section className="notes-list">
+        {children}
+      </section>
+    </div>
   );
 }
