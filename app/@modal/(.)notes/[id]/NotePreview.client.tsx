@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { fetchNoteById } from '@/lib/api';
 import { Modal } from '@/components/Modal/Modal';
+import styles from '@/components/NotePreview/NotePreview.module.css'; 
 
 interface NotePreviewProps {
   id: string;
@@ -13,43 +14,36 @@ interface NotePreviewProps {
 export default function NotePreviewClient({ id }: NotePreviewProps) {
   const router = useRouter();
 
-  // Отримуємо дані через React Query (використовує префетч із сервера)
   const { data: note, isLoading, isError } = useQuery({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
   });
 
-  // Обробка стану закриття модалки
   const handleClose = () => {
     router.back();
   };
 
-  if (isLoading) return <p className="status">Завантаження...</p>;
-  if (isError || !note) return <p className="status-error">Помилка завантаження нотатки.</p>;
+  if (isLoading) return <div className={styles.status}>Завантаження...</div>;
+  if (isError || !note) return <div className={styles.error}>Помилка завантаження.</div>;
 
   return (
     <Modal onClose={handleClose}>
-      <article className="preview-container">
-        <header className="preview-header">
-          <h1 className="preview-title">{note.title}</h1>
-          <button onClick={handleClose} className="btn-close" aria-label="Close">
-            &times;
-          </button>
+      <article className={styles.previewCard}>
+        <header className={styles.header}>
+          <h1 className={styles.title}>{note.title}</h1>
+          <button onClick={handleClose} className={styles.closeBtn}>&times;</button>
         </header>
 
-        <div className="preview-meta">
-          <span className="tag">#{note.tag}</span>
-          <time className="date">
-            {note.createdAt ? new Date(note.createdAt).toLocaleDateString() : 'Дата не вказана'}
+        <div className={styles.body}>
+          <span className={styles.tag}>#{note.tag}</span>
+          <p className={styles.text}>{note.text}</p>
+        </div>
+
+        <footer className={styles.footer}>
+          <time className={styles.date}>
+            Створено: {note.createdAt ? new Date(note.createdAt).toLocaleDateString() : '—'}
           </time>
-        </div>
-
-        <div className="preview-content">
-          <p className="text">{note.text}</p>
-        </div>
-
-        <footer className="footer">
-          <p className="note-id">ID: {note.id}</p>
+          <span className={styles.noteId}>ID: {note.id}</span>
         </footer>
       </article>
     </Modal>

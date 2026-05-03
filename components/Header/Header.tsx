@@ -1,23 +1,18 @@
 import Link from 'next/link';
-import css from './Header.module.css';
+import styles from './Header.module.css';
 
 export const Header = () => {
   return (
-    <header className={css.header}>
-      <Link href="/" aria-label="Home" className={css.logo}>
-        NoteHub
-      </Link>
-      
-      <nav aria-label="Main Navigation">
-        <ul className={css.navigation}>
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          <li>
-            <Link href="/notes/filter/all">Notes</Link>
-          </li>
-        </ul>
-      </nav>
+    <header className={styles.header}>
+      <div className={styles.container}>
+        <Link href="/" className={styles.logo}>
+          NoteHub
+        </Link>
+        <nav className={styles.nav}>
+          <Link href="/" className={styles.navLink}>Home</Link>
+          <Link href="/" className={styles.navLink}>Notes</Link>
+        </nav>
+      </div>
     </header>
   );
 };

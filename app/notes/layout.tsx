@@ -1,15 +1,13 @@
+import React from "react";
+
 export default function NotesLayout({
   children,
-  sidebar 
 }: {
   children: React.ReactNode;
-  sidebar?: React.ReactNode;
 }) {
   return (
-    <div className="notes-container">
-      <aside>{sidebar}</aside> 
-      
-      <section className="notes-list">
+    <div className="notes-page-container">
+      <section className="notes-content">
         {children}
       </section>
     </div>
