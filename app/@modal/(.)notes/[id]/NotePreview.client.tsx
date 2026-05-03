@@ -3,8 +3,9 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchNoteById } from '@/lib/api';
-import { type Note } from '@/types/note'; // Глобальний тип
+import { type Note } from '@/types/note'; 
 import { useRouter } from 'next/navigation';
+import css from '@/components/NotePreview/NotePreview.module.css';
 
 interface NotePreviewClientProps {
   id: string;
@@ -18,35 +19,31 @@ export default function NotePreviewClient({ id }: NotePreviewClientProps) {
     queryFn: () => fetchNoteById(id),
   });
 
-  if (isLoading) return <p className="">Завантаження нотатки...</p>;
-  if (isError || !note) return <p className="">Помилка завантаження.</p>;
+  if (isLoading) return <p className={css.loading}>Завантаження нотатки...</p>;
+  if (isError || !note) return <p className={css.error}>Помилка завантаження.</p>;
 
   return (
-    <article className="">
+    <article className={css.container}>
       <button 
         onClick={() => router.back()} 
-        className="" 
-      >
-        Закрити
-      </button>
+        className={css.backBtn} 
+      ></button>
       
-      <header className="">
-        <h1 className="">{note.title}</h1>
-        <div className="">
-          <span className="">#{note.tag}</span>
+      <header className={css.header}>
+        <h2 className={css.header}>{note.title}</h2>
+        <div className={css.item}>
+          <span className={css.tag}>#{note.tag}</span>
         </div>
       </header>
       
-      <div className="">
-        {/* Змінено з note.text на note.content */}
-        <p className="">{note.content}</p>
+      <div className={css.content}>
+        <p className={css.item}>{note.content}</p>
       </div>
 
-      <footer className="">
-        <div>ID: {note.id}</div>
-        {/* createdAt тепер доступний з глобального типу Note */}
+      <footer className={css.content}>
+        <div className={css.date}>ID: {note.id}</div>
         {note.createdAt && (
-          <div>Створено: {new Date(note.createdAt).toLocaleDateString()}</div>
+          <div className={css.item}>Створено: {new Date(note.createdAt).toLocaleDateString()}</div>
         )}
       </footer>
     </article>
