@@ -3,8 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchNotes } from '@/lib/api';
-import { type Note } from '@/types/note'; // Імпортуємо правильний тип
-import Link from 'next/link';
+import SearchBox from '@/components/SearchBox/SearchBox';
+import Pagination from '@/components/Pagination/Pagination';
+import { NoteList } from '@/components/NoteList/NoteList';
+import { Modal } from '@/components/Modal/Modal';
+import { NoteForm } from '@/components/NoteForm/NoteForm';
 
 interface NotesClientProps {
   tag: string;
@@ -14,11 +17,20 @@ export default function NotesClient({ tag }: NotesClientProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
 
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
-      setPage(1);
     }, 500);
     return () => clearTimeout(handler);
   }, [search]);
@@ -30,56 +42,36 @@ export default function NotesClient({ tag }: NotesClientProps) {
 
   if (isError) return <p className="">Сталася помилка при завантаженні нотаток.</p>;
 
-  const notes = data?.notes || [];
-
   return (
     <div className="">
-      <div className="px-4 mb-4">
-        <input
-          type="text"
-          placeholder="Пошук нотаток..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="" 
-        />
+      <div className="flex items-center justify-between px-4 mb-4">
+        <SearchBox value={search} onChange={handleSearchChange} />
+        <button 
+          onClick={() => setIsModalOpen(true)} 
+          className=""
+        >
+          Create Note
+        </button>
       </div>
 
       {isLoading ? (
         <p className="">Завантаження...</p>
-      ) : notes.length === 0 ? (
-        <p className="px-4">Нотаток не знайдено.</p>
       ) : (
-        <div className="">
-          {notes.map((note: Note) => (
-            <Link 
-              key={note.id} 
-              href={`/notes/${note.id}`}
-              className=""
-            >
-              <article>
-                <h3 className="">{note.title}</h3>
-                {/* Змінено з note.text на note.content згідно з типами GoIT API */}
-                <p className="">{note.content}</p>
-                <span className="">#{note.tag}</span>
-              </article>
-            </Link>
-          ))}
-        </div>
+        <NoteList notes={data?.notes || []} />
       )}
 
       {data && data.totalPages > 1 && (
-        <div className="flex gap-2 px-4 mt-4">
-          {Array.from({ length: data.totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              onClick={() => setPage(i + 1)}
-              disabled={page === i + 1}
-              className="" 
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
+        <Pagination 
+          currentPage={page} 
+          totalPages={data.totalPages} 
+          onPageChange={handlePageChange} 
+        />
+      )}
+
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <NoteForm onClose={() => setIsModalOpen(false)} />
+        </Modal>
       )}
     </div>
   );
